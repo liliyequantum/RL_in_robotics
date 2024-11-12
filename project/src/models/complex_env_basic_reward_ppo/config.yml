@@ -1,0 +1,12 @@
+clip: 0.2
+exp_id: complex_env_basic_reward_ppo
+gamma: 0.99
+log_dir: /root/catkin_ws/src/project/src/summary/complex_env_basic_reward_ppo
+lr: 0.0003
+max_timesteps_per_episode: 800
+n_updates_per_iteration: 100
+render: true
+render_every_i: 10
+save_freq: 5
+seed: null
+timesteps_per_batch: 8000
