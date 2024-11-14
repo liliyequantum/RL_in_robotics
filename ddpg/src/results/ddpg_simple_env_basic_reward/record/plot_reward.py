@@ -13,7 +13,10 @@ else:
 
 # Plot the non-zero portion of ave_reward
 plt.plot(ave_reward_nonzero)
-plt.xlabel("Time Steps")
-plt.ylabel("Average Reward")
-plt.title("Average Reward (Non-zero values)")
+plt.xlabel("Episodes",fontsize = 18)
+plt.ylabel("Average Reward", fontsize = 18)
+plt.tick_params(labelsize=18)  # Set tick label size for both axes
+#plt.title("Average Reward")
+plt.tight_layout()
+plt.savefig('./ddpg_ave_reward_plot.png', format='png', dpi=300)  # Saves as a PNG file with 300 DPI
 plt.show()

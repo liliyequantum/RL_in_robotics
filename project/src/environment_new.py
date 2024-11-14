@@ -21,7 +21,7 @@ from wall_penalty import pen_wall
 diagonal_dis = math.sqrt(2) * 2
 goal_model_dir = os.path.join(os.path.split(os.path.realpath(__file__))[0], '..', '..', 'turtlebot3_simulations',
                               'turtlebot3_gazebo', 'models', 'Target', 'model.sdf')
-len_batch = 6
+#len_batch = 6
 
 class Env():
     def __init__(self, is_training):

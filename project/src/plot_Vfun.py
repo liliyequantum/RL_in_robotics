@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import re
 
 # Read the file and extract values using regular expressions
-with open('./record/V_fun.txt', 'r') as file:
+with open('./record/complex_env_basic_reward_ppo/V_fun.txt', 'r') as file:
     # Use regular expressions to find numbers inside 'tensor(...)'
     data = [float(re.search(r'[-+]?\d*\.\d+|\d+', line).group()) for line in file]
 
