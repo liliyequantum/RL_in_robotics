@@ -1,5 +1,6 @@
 ## ASU EEE 598: Reinforcement Learning in Robotics
 This repository contains code for the ASU course EEE 598: Reinforcement Learning in Robotics. It is based on code from GitHub: [navbot_ppo](https://github.com/hamidthri/navbot_ppo)
+
 ![PPO in the Gazebo env](example.gif)
 
 ## Requirements
