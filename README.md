@@ -1,11 +1,6 @@
 
 ## This repository is for ASU EEE 598 RL in robotics based on code from [navbot_ppo](https://github.com/hamidthri/navbot_ppo)
 
-## PPO in the simple Gazebo Env:
-# Project Title
-
-[Watch the main results](project/src/simple_env_basic_reward_PPO_1.mp4)
-
 ## Requirements
 - ROS Noetic
 - Ubuntu 20.04
