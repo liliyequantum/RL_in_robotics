@@ -1,6 +1,8 @@
 
 ## This repository is for ASU EEE 598 RL in robotics based on code from [navbot_ppo](https://github.com/hamidthri/navbot_ppo)
 
+![PPO in the Gazebo env](example.gif)
+
 ## Requirements
 - ROS Noetic
 - Ubuntu 20.04
