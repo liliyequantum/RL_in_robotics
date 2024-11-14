@@ -4,7 +4,7 @@
 ## PPO in the simple Gazebo Env:
 # Project Title
 
-[Watch the main results](RL_in_robotics/project/src/simple_env_basic_reward_PPO_1.mp4)
+[Watch the main results](project/src/simple_env_basic_reward_PPO_1.mp4)
 
 ## Requirements
 - ROS Noetic
