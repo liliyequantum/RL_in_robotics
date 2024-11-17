@@ -34,7 +34,7 @@ ave_reward_ppo_complex_avg_10 = average_every_n(ave_reward_ppo_complex, 10)
 
 # Plot the non-zero portion of ave_reward
 plt.figure()
-plt.plot(ave_reward_ppo_simple,label='PPO',linewidth=1,color='dodgerblue',alpha=0.8)
+plt.plot(ave_reward_ppo_simple,label='Proposed PPO',linewidth=1,color='dodgerblue',alpha=0.8)
 plt.plot(ave_reward_ddpg_simple,label='DDPG',linewidth=1,color='tab:orange',alpha=0.8)
 plt.plot(np.arange(0, len(ave_reward_ppo_simple), 10),ave_reward_ppo_simple_avg_10,\
          color='tab:blue', alpha=1)
@@ -53,7 +53,7 @@ plt.show()
 
 # Plot the non-zero portion of ave_reward
 plt.figure()
-plt.plot(ave_reward_ppo_complex,label='PPO',linewidth=1,color='dodgerblue',alpha=0.8)
+plt.plot(ave_reward_ppo_complex,label='Proposed PPO',linewidth=1,color='dodgerblue',alpha=0.8)
 plt.plot(ave_reward_ddpg_complex,label='DDPG',linewidth=1,color='tab:orange',alpha=0.8)
 plt.plot(np.arange(10, len(ave_reward_ppo_complex), 10),ave_reward_ppo_complex_avg_10,\
          color='tab:blue',alpha=1)
