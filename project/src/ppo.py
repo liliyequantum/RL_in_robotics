@@ -17,6 +17,7 @@ from torch.distributions import MultivariateNormal
 import matplotlib.pyplot as plt
 import os, glob
 import torch.nn.functional as F
+from torch.cuda.amp import autocast  # K
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -127,6 +128,12 @@ class PPO:
             # Increment the number of iterations
             i_so_far += 1
 
+            # Add Learning Rate Decay - k
+            for param_group in self.actor_optim.param_groups:
+                param_group['lr'] = self.lr * (0.95 ** i_so_far)  # New Line
+            for param_group in self.critic_optim.param_groups:
+                param_group['lr'] = self.lr * (0.95 ** i_so_far)  # New Line
+
             # Logging timesteps so far and iterations so far
             self.logger['t_so_far'] = t_so_far
             self.logger['i_so_far'] = i_so_far
@@ -169,19 +176,38 @@ class PPO:
                 # the performance function, but Adam minimizes the loss. So minimizing the negative
                 # performance function maximizes it.
                 actor_loss = (-torch.min(surr1, surr2)).mean()
+
+
+                # Wrap in Mixed Precision - k
+                with autocast():  # New Line
+                    actor_loss = (-torch.min(surr1, surr2)).mean()  # Modified Line
+
                 critic_loss = nn.MSELoss()(self.V, batch_rtgs)
+                # Wrap in Mixed Precision
+                with autocast():  # New Line
+                    critic_loss = nn.MSELoss()(self.V, batch_rtgs)  # Modified Line
+                
                 # weihgts = self.actor.parameters()
                 # w1_res1_actor0 = weihgts.gi_frame.f_locals['self'].rb1.fc1.weight
 
                 # Calculate gradients and perform backward propagation for actor network
                 self.actor_optim.zero_grad()
                 actor_loss.backward(retain_graph=True)
+                # Add Gradient Clipping
+                torch.nn.utils.clip_grad_norm_(self.actor.parameters(), max_norm=0.5)  # New Line - k
                 self.actor_optim.step()
 
                 # Calculate gradients and perform backward propagation for critic network
                 self.critic_optim.zero_grad()
                 critic_loss.backward()
+                # Add Gradient Clipping
+                torch.nn.utils.clip_grad_norm_(self.critic.parameters(), max_norm=0.5)  # New Line - k
                 self.critic_optim.step()
+
+                for name, param in self.actor.named_parameters(): # - k
+                    if param.grad is not None:
+                        print(f"Actor Grad Norm ({name}): {param.grad.norm().item()}")  # Debug Line
+
 
                 # Log actor loss
                 self.logger['actor_losses'].append(actor_loss.detach())
@@ -339,6 +365,11 @@ class PPO:
         # Convert the rewards-to-go into a tensor
         batch_rtgs = torch.tensor(batch_rtgs, dtype=torch.float)
 
+        # Add Reward Normalization
+        batch_rtgs = (batch_rtgs - batch_rtgs.mean()) / (batch_rtgs.std() + 1e-8)  # New Line - k
+        print(f"Normalized Rewards: {batch_rtgs[:10]}")  # Debug Line - k
+
+
         return batch_rtgs
 
     def get_action(self, obs, t_so_far, one_round):
@@ -418,7 +449,8 @@ class PPO:
 		"""
         # Initialize default values for hyperparameters
         # Algorithm hyperparameters
-        self.timesteps_per_batch = 8000  # Number of timesteps to run per batch
+        # self.timesteps_per_batch = 8000  # Number of timesteps to run per batch
+        self.timesteps_per_batch = 2000 # new line- k
         self.max_timesteps_per_episode = 800  # Max number of timesteps per episode
         self.n_updates_per_iteration = 50  # Number of times to update actor/critic per iteration
         self.lr = 3e-4  # Learning rate of actor optimizer
@@ -496,7 +528,20 @@ class PPO:
         t_so_far = self.logger['t_so_far']
         i_so_far = self.logger['i_so_far']
         avg_ep_lens = np.mean(self.logger['batch_lens'])
+        # Add Real-Time Plot - k 
+        plt.ion()  # Enable interactive mode
+        plt.plot(self.logger_global['Iteration'], avg_ep_rews, 'bo-')  # Plot reward vs iteration
+        plt.pause(0.01)  # Update the plot in real-time
+        plt.ioff()  # Optional: Turn off interactive mode after training
+
+
         avg_ep_rews = np.mean([np.sum(ep_rews) for ep_rews in self.logger['batch_rews']])
+        # Add Real-Time Plot - k 
+        plt.ion()  # Enable interactive mode
+        plt.plot(self.logger_global['Iteration'], avg_ep_rews, 'bo-')  # Plot reward vs iteration
+        plt.pause(0.01)  # Update the plot in real-time
+        plt.ioff()  # Optional: Turn off interactive mode after training
+
         avg_actor_loss = np.mean([losses.detach().cpu().mean() for losses in self.logger['actor_losses']])
         avg_critic_loss = np.mean([losses.detach().cpu().mean() for losses in self.logger['critic_losses']])
 
